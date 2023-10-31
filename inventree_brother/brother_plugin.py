@@ -154,7 +154,11 @@ class BrotherLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
         # Read settings
         model = self.get_setting('MODEL')
         ip_address = self.get_setting('IP_ADDRESS')
-        media_type = self.get_setting('LABEL')
+        
+        media_type = kwargs['label_instance'].metadata.get('media_type')
+
+        if not media_type:
+            media_type = self.get_setting('LABEL')
 
         # Get specifications of media type
         media_specs = None
@@ -162,7 +166,11 @@ class BrotherLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
             if label_specs.identifier == media_type:
                 media_specs = label_specs
 
-        rotation = int(self.get_setting('ROTATION')) + 90
+        rotation = kwargs['label_instance'].metadata.get('rotation')
+
+        if not rotation:
+            rotation = int(self.get_setting('ROTATION'))
+
         rotation = rotation % 360
 
         if rotation in [90, 180, 270]:
